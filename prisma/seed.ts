@@ -3,18 +3,18 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 async function main() {
   const root = await prisma.usuario.upsert({
-    where: { login: 'd854440' },
+    where: { login: 'x398900' },
     create: {
-      login: 'd854440',
-      nome: 'Bruno Luiz Vieira',
-      email: 'blvieira@prefeitura.sp.gov.br',
+      login: 'x398900',
+      nome: 'Gustavo Mendes de Lima',
+      email: 'gmlima@prefeitura.sp.gov.br',
       status: 1,
       permissao: 'DEV',
     },
     update: {
-      login: 'd854440',
+      login: 'x398900',
       nome: 'Bruno Luiz Vieira',
-      email: 'blvieira@prefeitura.sp.gov.br',
+      email: 'gmlima@prefeitura.sp.gov.br',
       status: 1,
       permissao: 'DEV',
     },

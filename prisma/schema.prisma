@@ -31,3 +31,13 @@ model Usuario {
 
   @@map("usuarios")
 }
+
+model Avaliacoes {
+  id            String      @id @default(uuid())
+  comentario    String
+  avaliacao     Int
+  usuario_id    String
+  criadoEm      DateTime    @default(now())
+
+  @@map("avaliacoes")
+}

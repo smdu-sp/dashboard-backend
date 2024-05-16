@@ -7,8 +7,7 @@ import { Usuario } from '@prisma/client';
 @Controller('chamados')
 export class ChamadosController {
   constructor(private readonly chamadosService: ChamadosService) {}
-  
-  @IsPublic()
+
   @Get()
   findAll(
     @UsuarioAtual() usuario: Usuario, 

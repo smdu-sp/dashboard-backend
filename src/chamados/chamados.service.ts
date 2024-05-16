@@ -7,12 +7,13 @@ import { Prisma3Service } from 'src/prisma3/prisma3.service';
 export class ChamadosService {
   constructor(private prisma: PrismaService, private prisma3: Prisma3Service) { }
   async findAll(usuario: Usuario, status: number) {
+    console.log(usuario);
     const data = await this.prisma3.glpi_ticketsatisfactions.findMany({
       where: {
-        ...(usuario.permissao === 'USR' ? { 
+        ...(usuario && usuario.permissao === 'USR' ? { 
           Tickets: {
             Usuarios: {
-              every: {
+              some: {
                 type: 1,
                 user: {
                   name: {

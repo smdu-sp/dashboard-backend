@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ChamadosService } from './chamados.service';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { UsuarioAtual } from 'src/auth/decorators/usuario-atual.decorator';
+import { Usuario } from '@prisma/client';
 
 @Controller('chamados')
 export class ChamadosController {
@@ -8,8 +10,11 @@ export class ChamadosController {
   
   @IsPublic()
   @Get()
-  findAll( @Query('status') status: string) {
-    return this.chamadosService.findAll(+status);
+  findAll(
+    @UsuarioAtual() usuario: Usuario, 
+    @Query('status') status: string
+  ) {
+    return this.chamadosService.findAll(usuario, +status);
   }
 
   @Get(':id')

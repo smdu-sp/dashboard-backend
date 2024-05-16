@@ -1,0 +1,444 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@glpi/prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("GLPI_DATABASE_URL")
+}
+
+model glpi_ticketcosts {
+  id            Int       @id @default(autoincrement())
+  tickets_id    Int       @default(0)
+  name          String?   @db.VarChar(255)
+  comment       String?   @db.Text
+  begin_date    DateTime? @db.Date
+  end_date      DateTime? @db.Date
+  actiontime    Int       @default(0)
+  cost_time     Decimal   @default(0.0000) @db.Decimal(20, 4)
+  cost_fixed    Decimal   @default(0.0000) @db.Decimal(20, 4)
+  cost_material Decimal   @default(0.0000) @db.Decimal(20, 4)
+  budgets_id    Int       @default(0)
+  entities_id   Int       @default(0)
+
+  @@index([begin_date], map: "begin_date")
+  @@index([budgets_id], map: "budgets_id")
+  @@index([end_date], map: "end_date")
+  @@index([entities_id], map: "entities_id")
+  @@index([name], map: "name")
+  @@index([tickets_id], map: "tickets_id")
+}
+
+model glpi_ticketrecurrents {
+  id                 Int       @id @default(autoincrement())
+  name               String?   @db.VarChar(255)
+  comment            String?   @db.Text
+  entities_id        Int       @default(0)
+  is_recursive       Boolean   @default(false)
+  is_active          Boolean   @default(false)
+  tickettemplates_id Int       @default(0)
+  begin_date         DateTime? @db.DateTime(0)
+  periodicity        String?   @db.VarChar(255)
+  create_before      Int       @default(0)
+  next_creation_date DateTime? @db.DateTime(0)
+  calendars_id       Int       @default(0)
+  end_date           DateTime? @db.DateTime(0)
+
+  @@index([calendars_id], map: "calendars_id")
+  @@index([entities_id], map: "entities_id")
+  @@index([is_active], map: "is_active")
+  @@index([is_recursive], map: "is_recursive")
+  @@index([name], map: "name")
+  @@index([next_creation_date], map: "next_creation_date")
+  @@index([tickettemplates_id], map: "tickettemplates_id")
+}
+
+model glpi_tickets {
+  id                         Int       @id @default(autoincrement())
+  entities_id                Int       @default(0)
+  name                       String?   @db.VarChar(255)
+  date                       DateTime? @db.DateTime(0)
+  closedate                  DateTime? @db.DateTime(0)
+  solvedate                  DateTime? @db.DateTime(0)
+  takeintoaccountdate        DateTime? @db.Timestamp(0)
+  date_mod                   DateTime? @db.DateTime(0)
+  users_id_lastupdater       Int       @default(0)
+  status                     Int       @default(1)
+  users_id_recipient         Int       @default(0)
+  requesttypes_id            Int       @default(0)
+  content                    String?   @db.LongText
+  urgency                    Int       @default(1)
+  impact                     Int       @default(1)
+  priority                   Int       @default(1)
+  itilcategories_id          Int       @default(0)
+  type                       Int       @default(1)
+  global_validation          Int       @default(1)
+  slas_id_ttr                Int       @default(0)
+  slas_id_tto                Int       @default(0)
+  slalevels_id_ttr           Int       @default(0)
+  time_to_resolve            DateTime? @db.DateTime(0)
+  time_to_own                DateTime? @db.DateTime(0)
+  begin_waiting_date         DateTime? @db.DateTime(0)
+  sla_waiting_duration       Int       @default(0)
+  ola_waiting_duration       Int       @default(0)
+  olas_id_tto                Int       @default(0)
+  olas_id_ttr                Int       @default(0)
+  olalevels_id_ttr           Int       @default(0)
+  ola_ttr_begin_date         DateTime? @db.DateTime(0)
+  internal_time_to_resolve   DateTime? @db.DateTime(0)
+  internal_time_to_own       DateTime? @db.DateTime(0)
+  waiting_duration           Int       @default(0)
+  close_delay_stat           Int       @default(0)
+  solve_delay_stat           Int       @default(0)
+  takeintoaccount_delay_stat Int       @default(0)
+  actiontime                 Int       @default(0)
+  is_deleted                 Boolean   @default(false)
+  locations_id               Int       @default(0)
+  validation_percent         Int       @default(0)
+  date_creation              DateTime? @db.DateTime(0)
+  ola_tto_begin_date         DateTime? @db.Timestamp(0)
+  Usuarios                   glpi_tickets_users[]
+  ticketSatisfactions  glpi_ticketsatisfactions[]
+
+  @@index([closedate], map: "closedate")
+  @@index([date], map: "date")
+  @@index([date_creation], map: "date_creation")
+  @@index([date_mod], map: "date_mod")
+  @@index([entities_id], map: "entities_id")
+  @@index([global_validation], map: "global_validation")
+  @@index([impact], map: "impact")
+  @@index([internal_time_to_own], map: "internal_time_to_own")
+  @@index([internal_time_to_resolve], map: "internal_time_to_resolve")
+  @@index([is_deleted], map: "is_deleted")
+  @@index([itilcategories_id], map: "itilcategories_id")
+  @@index([locations_id], map: "locations_id")
+  @@index([name], map: "name")
+  @@index([ola_waiting_duration], map: "ola_waiting_duration")
+  @@index([olalevels_id_ttr], map: "olalevels_id_ttr")
+  @@index([olas_id_tto], map: "olas_id_tto")
+  @@index([olas_id_ttr], map: "olas_id_ttr")
+  @@index([priority], map: "priority")
+  @@index([requesttypes_id], map: "request_type")
+  @@index([slalevels_id_ttr], map: "slalevels_id_ttr")
+  @@index([slas_id_tto], map: "slas_id_tto")
+  @@index([slas_id_ttr], map: "slas_id_ttr")
+  @@index([solvedate], map: "solvedate")
+  @@index([status], map: "status")
+  @@index([takeintoaccountdate], map: "takeintoaccountdate")
+  @@index([time_to_own], map: "time_to_own")
+  @@index([time_to_resolve], map: "time_to_resolve")
+  @@index([type], map: "type")
+  @@index([urgency], map: "urgency")
+  @@index([users_id_lastupdater], map: "users_id_lastupdater")
+  @@index([users_id_recipient], map: "users_id_recipient")
+}
+
+model glpi_tickets_contracts {
+  id           Int @id @default(autoincrement()) @db.UnsignedInt
+  tickets_id   Int @default(0) @db.UnsignedInt
+  contracts_id Int @default(0) @db.UnsignedInt
+
+  @@unique([tickets_id, contracts_id], map: "unicity")
+  @@index([contracts_id], map: "contracts_id")
+}
+
+model glpi_tickets_tickets {
+  id           Int @id @default(autoincrement())
+  tickets_id_1 Int @default(0)
+  tickets_id_2 Int @default(0)
+  link         Int @default(1)
+
+  @@unique([tickets_id_1, tickets_id_2], map: "unicity")
+  @@index([tickets_id_2], map: "tickets_id_2")
+}
+
+model glpi_tickets_users {
+  id                Int     @id @default(autoincrement())
+  tickets_id        Int     @default(0)
+  users_id          Int     @default(0)
+  type              Int     @default(1)
+  use_notification  Boolean @default(true)
+  alternative_email String? @db.VarChar(255)
+  user              glpi_users?   @relation(fields: [users_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ticket            glpi_tickets? @relation(fields: [tickets_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([tickets_id, type, users_id, alternative_email], map: "unicity")
+  @@index([users_id, type], map: "user")
+}
+
+model glpi_ticketsatisfactions {
+  id            Int       @id @default(autoincrement())
+  tickets_id    Int       @unique(map: "tickets_id") @default(0)
+  type          Int       @default(1)
+  date_begin    DateTime? @db.DateTime(0)
+  date_answered DateTime? @db.DateTime(0)
+  satisfaction  Int?
+  comment       String?   @db.Text
+  Tickets       glpi_tickets? @relation(fields: [tickets_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+}
+
+model glpi_tickettasks {
+  id                Int       @id @default(autoincrement())
+  uuid              String?   @unique(map: "uuid") @db.VarChar(255)
+  tickets_id        Int       @default(0)
+  taskcategories_id Int       @default(0)
+  date              DateTime? @db.DateTime(0)
+  users_id          Int       @default(0)
+  users_id_editor   Int       @default(0)
+  content           String?   @db.LongText
+  is_private        Boolean   @default(false)
+  actiontime        Int       @default(0)
+  begin             DateTime? @db.DateTime(0)
+  end               DateTime? @db.DateTime(0)
+  state             Int       @default(1)
+  users_id_tech     Int       @default(0)
+  groups_id_tech    Int       @default(0)
+  date_mod          DateTime? @db.DateTime(0)
+  date_creation     DateTime? @db.DateTime(0)
+  tasktemplates_id  Int       @default(0)
+  timeline_position Boolean   @default(false)
+  sourceitems_id    Int       @default(0)
+  sourceof_items_id Int       @default(0) @db.UnsignedInt
+
+  @@index([begin], map: "begin")
+  @@index([date], map: "date")
+  @@index([date_creation], map: "date_creation")
+  @@index([date_mod], map: "date_mod")
+  @@index([end], map: "end")
+  @@index([groups_id_tech], map: "groups_id_tech")
+  @@index([is_private], map: "is_private")
+  @@index([sourceitems_id], map: "sourceitems_id")
+  @@index([sourceof_items_id], map: "sourceof_items_id")
+  @@index([state], map: "state")
+  @@index([taskcategories_id], map: "taskcategories_id")
+  @@index([tasktemplates_id], map: "tasktemplates_id")
+  @@index([tickets_id], map: "tickets_id")
+  @@index([users_id], map: "users_id")
+  @@index([users_id_editor], map: "users_id_editor")
+  @@index([users_id_tech], map: "users_id_tech")
+}
+
+model glpi_tickettemplatehiddenfields {
+  id                 Int @id @default(autoincrement())
+  tickettemplates_id Int @default(0)
+  num                Int @default(0)
+
+  @@unique([tickettemplates_id, num], map: "unicity")
+}
+
+model glpi_tickettemplatemandatoryfields {
+  id                 Int @id @default(autoincrement())
+  tickettemplates_id Int @default(0)
+  num                Int @default(0)
+
+  @@unique([tickettemplates_id, num], map: "unicity")
+}
+
+model glpi_tickettemplatepredefinedfields {
+  id                 Int     @id @default(autoincrement())
+  tickettemplates_id Int     @default(0)
+  num                Int     @default(0)
+  value              String? @db.Text
+
+  @@index([tickettemplates_id], map: "tickettemplates_id")
+}
+
+model glpi_tickettemplates {
+  id           Int     @id @default(autoincrement())
+  name         String? @db.VarChar(255)
+  entities_id  Int     @default(0)
+  is_recursive Boolean @default(false)
+  comment      String? @db.Text
+
+  @@index([entities_id], map: "entities_id")
+  @@index([is_recursive], map: "is_recursive")
+  @@index([name], map: "name")
+}
+
+model glpi_ticketvalidations {
+  id                 Int       @id @default(autoincrement())
+  entities_id        Int       @default(0)
+  users_id           Int       @default(0)
+  tickets_id         Int       @default(0)
+  users_id_validate  Int       @default(0)
+  comment_submission String?   @db.Text
+  comment_validation String?   @db.Text
+  status             Int       @default(2)
+  submission_date    DateTime? @db.DateTime(0)
+  validation_date    DateTime? @db.DateTime(0)
+  timeline_position  Boolean   @default(false)
+
+  @@index([entities_id], map: "entities_id")
+  @@index([status], map: "status")
+  @@index([submission_date], map: "submission_date")
+  @@index([tickets_id], map: "tickets_id")
+  @@index([users_id], map: "users_id")
+  @@index([users_id_validate], map: "users_id_validate")
+  @@index([validation_date], map: "validation_date")
+}
+
+model glpi_usercategories {
+  id            Int       @id @default(autoincrement())
+  name          String?   @db.VarChar(255)
+  comment       String?   @db.Text
+  date_mod      DateTime? @db.DateTime(0)
+  date_creation DateTime? @db.DateTime(0)
+
+  @@index([date_creation], map: "date_creation")
+  @@index([date_mod], map: "date_mod")
+  @@index([name], map: "name")
+}
+
+model glpi_useremails {
+  id         Int     @id @default(autoincrement())
+  users_id   Int     @default(0)
+  is_default Boolean @default(false)
+  is_dynamic Boolean @default(false)
+  email      String? @db.VarChar(255)
+
+  @@unique([users_id, email], map: "unicity")
+  @@index([email], map: "email")
+  @@index([is_default], map: "is_default")
+  @@index([is_dynamic], map: "is_dynamic")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model glpi_users {
+  id                                     Int       @id @default(autoincrement())
+  name                                   String?   @db.VarChar(255)
+  password                               String?   @db.VarChar(255)
+  password_last_update                   DateTime? @db.Timestamp(0)
+  phone                                  String?   @db.VarChar(255)
+  phone2                                 String?   @db.VarChar(255)
+  mobile                                 String?   @db.VarChar(255)
+  realname                               String?   @db.VarChar(255)
+  firstname                              String?   @db.VarChar(255)
+  locations_id                           Int       @default(0)
+  language                               String?   @db.Char(10)
+  use_mode                               Int       @default(0)
+  list_limit                             Int?
+  is_active                              Boolean   @default(true)
+  comment                                String?   @db.Text
+  auths_id                               Int       @default(0)
+  authtype                               Int       @default(0)
+  last_login                             DateTime? @db.DateTime(0)
+  date_mod                               DateTime? @db.DateTime(0)
+  date_sync                              DateTime? @db.DateTime(0)
+  is_deleted                             Boolean   @default(false)
+  profiles_id                            Int       @default(0)
+  entities_id                            Int       @default(0)
+  usertitles_id                          Int       @default(0)
+  usercategories_id                      Int       @default(0)
+  date_format                            Int?
+  number_format                          Int?
+  names_format                           Int?
+  csv_delimiter                          String?   @db.Char(1)
+  is_ids_visible                         Boolean?
+  use_flat_dropdowntree                  Boolean?
+  show_jobs_at_login                     Boolean?
+  priority_1                             String?   @db.Char(20)
+  priority_2                             String?   @db.Char(20)
+  priority_3                             String?   @db.Char(20)
+  priority_4                             String?   @db.Char(20)
+  priority_5                             String?   @db.Char(20)
+  priority_6                             String?   @db.Char(20)
+  followup_private                       Boolean?
+  task_private                           Boolean?
+  default_requesttypes_id                Int?
+  password_forget_token                  String?   @db.Char(40)
+  password_forget_token_date             DateTime? @db.DateTime(0)
+  user_dn                                String?   @db.Text
+  registration_number                    String?   @db.VarChar(255)
+  show_count_on_tabs                     Boolean?
+  refresh_views                          Int?
+  set_default_tech                       Boolean?
+  personal_token                         String?   @db.VarChar(255)
+  personal_token_date                    DateTime? @db.DateTime(0)
+  api_token                              String?   @db.VarChar(255)
+  api_token_date                         DateTime? @db.DateTime(0)
+  cookie_token                           String?   @db.VarChar(255)
+  cookie_token_date                      DateTime? @db.DateTime(0)
+  display_count_on_home                  Int?
+  notification_to_myself                 Boolean?
+  duedateok_color                        String?   @db.VarChar(255)
+  duedatewarning_color                   String?   @db.VarChar(255)
+  duedatecritical_color                  String?   @db.VarChar(255)
+  duedatewarning_less                    Int?
+  duedatecritical_less                   Int?
+  duedatewarning_unit                    String?   @db.VarChar(255)
+  duedatecritical_unit                   String?   @db.VarChar(255)
+  display_options                        String?   @db.Text
+  is_deleted_ldap                        Boolean   @default(false)
+  pdffont                                String?   @db.VarChar(255)
+  picture                                String?   @db.VarChar(255)
+  begin_date                             DateTime? @db.DateTime(0)
+  end_date                               DateTime? @db.DateTime(0)
+  keep_devices_when_purging_item         Boolean?
+  privatebookmarkorder                   String?   @db.LongText
+  backcreated                            Boolean?
+  task_state                             Int?
+  palette                                String?   @db.Char(20)
+  page_layout                            String?   @db.Char(20)
+  fold_menu                              Int?      @db.TinyInt
+  fold_search                            Int?      @db.TinyInt
+  savedsearches_pinned                   String?   @db.Text
+  timeline_order                         String?   @db.Char(20)
+  itil_layout                            String?   @db.Text
+  richtext_layout                        String?   @db.Char(20)
+  set_default_requester                  Boolean?
+  lock_autolock_mode                     Boolean?
+  lock_directunlock_notification         Boolean?
+  date_creation                          DateTime? @db.DateTime(0)
+  highcontrast_css                       Boolean?  @default(false)
+  plannings                              String?   @db.Text
+  sync_field                             String?   @db.VarChar(255)
+  groups_id                              Int       @default(0)
+  users_id_supervisor                    Int       @default(0)
+  timezone                               String?   @db.VarChar(50)
+  default_dashboard_central              String?   @db.VarChar(100)
+  default_dashboard_assets               String?   @db.VarChar(100)
+  default_dashboard_helpdesk             String?   @db.VarChar(100)
+  default_dashboard_mini_ticket          String?   @db.VarChar(100)
+  default_central_tab                    Int?      @default(0) @db.TinyInt
+  nickname                               String?   @db.VarChar(255)
+  timeline_action_btn_layout             Int?      @default(0) @db.TinyInt
+  timeline_date_format                   Int?      @default(0) @db.TinyInt
+  use_flat_dropdowntree_on_search_result Int?      @db.TinyInt
+  tickets                                glpi_tickets_users[]
+
+  @@unique([name, authtype, auths_id], map: "unicityloginauth")
+  @@index([authtype, auths_id], map: "authitem")
+  @@index([auths_id], map: "auths_id")
+  @@index([begin_date], map: "begin_date")
+  @@index([date_creation], map: "date_creation")
+  @@index([date_mod], map: "date_mod")
+  @@index([default_requesttypes_id], map: "default_requesttypes_id")
+  @@index([end_date], map: "end_date")
+  @@index([entities_id], map: "entities_id")
+  @@index([firstname], map: "firstname")
+  @@index([groups_id], map: "groups_id")
+  @@index([is_active], map: "is_active")
+  @@index([is_deleted], map: "is_deleted")
+  @@index([is_deleted_ldap], map: "is_deleted_ldap")
+  @@index([locations_id], map: "locations_id")
+  @@index([profiles_id], map: "profiles_id")
+  @@index([realname], map: "realname")
+  @@index([sync_field], map: "sync_field")
+  @@index([usercategories_id], map: "usercategories_id")
+  @@index([users_id_supervisor], map: "users_id_supervisor")
+  @@index([usertitles_id], map: "usertitles_id")
+}
+
+model glpi_usertitles {
+  id            Int       @id @default(autoincrement())
+  name          String?   @db.VarChar(255)
+  comment       String?   @db.Text
+  date_mod      DateTime? @db.DateTime(0)
+  date_creation DateTime? @db.DateTime(0)
+
+  @@index([date_creation], map: "date_creation")
+  @@index([date_mod], map: "date_mod")
+  @@index([name], map: "name")
+}

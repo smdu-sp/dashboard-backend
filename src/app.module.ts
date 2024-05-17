@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Global, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,14 +9,19 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { RoleGuard } from './auth/guards/role.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { Prisma2Module } from './prisma2/prisma2.module';
-import { AvaliacaoModule } from './avaliacoes/avaliacao.module';
 import { ChamadosModule } from './chamados/chamados.module';
 import { Prisma3Module } from './prisma3/prisma3.module';
 
-
 @Global()
 @Module({
-  imports: [AvaliacaoModule, UsuariosModule, AuthModule, PrismaModule, Prisma2Module, ChamadosModule, Prisma3Module],
+  imports: [
+    UsuariosModule,
+    AuthModule,
+    PrismaModule,
+    Prisma2Module,
+    ChamadosModule,
+    Prisma3Module,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

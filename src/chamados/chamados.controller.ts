@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Body, Patch, Param, Query } from '@nestjs/common';
 import { ChamadosService } from './chamados.service';
-import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 import { UsuarioAtual } from 'src/auth/decorators/usuario-atual.decorator';
 import { Usuario } from '@prisma/client';
 import { UpdateChamadosDto } from './dto/update-chamados.dto';
@@ -27,4 +27,28 @@ export class ChamadosController {
     return this.chamadosService.avaliar(+id, updateChamadosDto);
   }
 
+  @Get('mes')
+  chamadosMes() {
+    return this.chamadosService.chamadosMes();
+  }
+
+  @Get('ano')
+  chamadosAno() {
+    return this.chamadosService.chamadosAno();
+  }
+
+  @Get('mensal')
+  chamadosPorMes() {
+    return this.chamadosService.chamadosPorMes();
+  }
+
+  @Get('atribuidos')
+  chamadosAtribuidos() {
+    return this.chamadosService.chamadosAtribuidos();
+  }
+  
+  @Get('novos')
+  chamadosNovos() {
+    return this.chamadosService.chamadosNovos();
+  }
 }

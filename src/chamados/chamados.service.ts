@@ -1,13 +1,13 @@
 import { Usuario } from '@prisma/client';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma3Service } from 'src/prisma3/prisma3.service';
+import { UpdateChamadosDto } from './dto/update-chamados.dto';
 
 @Injectable()
 export class ChamadosService {
   constructor(private prisma: PrismaService, private prisma3: Prisma3Service) { }
   async findAll(usuario: Usuario, status: number) {
-    console.log(usuario);
     const data = await this.prisma3.glpi_ticketsatisfactions.findMany({
       where: {
         ...(usuario && usuario.permissao === 'USR' ? { 
@@ -46,5 +46,17 @@ export class ChamadosService {
 
   findOne(id: number) {
     return `This action returns a #${id} chamado`;
+  }
+
+  async avaliar(id: number, updateChamadosDto: UpdateChamadosDto) {
+    console.log(id, updateChamadosDto);
+    const tipo = await this.prisma3.glpi_ticketsatisfactions.findUnique({
+      where: { id }
+    });
+    if (!tipo) throw new InternalServerErrorException('Erro ao buscar tipo');
+    return await this.prisma3.glpi_ticketsatisfactions.update({
+      where: { id },
+      data: {satisfaction: +updateChamadosDto.satisfaction, comment: updateChamadosDto.comment}
+    });
   }
 }

@@ -66,7 +66,6 @@ export class ChamadosService {
   }
 
   async avaliar(id: number, updateChamadosDto: UpdateChamadosDto) {
-    console.log(id, updateChamadosDto);
     const tipo = await this.prisma3.glpi_ticketsatisfactions.findUnique({
       where: { id }
     });
@@ -78,7 +77,6 @@ export class ChamadosService {
   }
 
   async chamadosMes(): Promise<{ name: string; tickets: number } []> {
-      
       const data = await this.prisma3.glpi_users.findMany({
         where: {
           is_active: true,
@@ -169,15 +167,12 @@ export class ChamadosService {
       return(final);
   }
   async chamadosAtribuidos(): Promise<{ quantidade: number }> {
-    
-
-      const data = await this.prisma3.glpi_tickets.count({
-        where: {
-          status: 2
-        }
-      });
-      return { quantidade: data };
-   
+    const data = await this.prisma3.glpi_tickets.count({
+      where: {
+        status: 2
+      }
+    });
+    return { quantidade: data };
   }
   
   async chamadosNovos(): Promise<{ quantidade: number }> {

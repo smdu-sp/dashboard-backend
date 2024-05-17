@@ -41,12 +41,6 @@ export class UsuariosService {
   ) {
     if (
       permissao === $Enums.Permissao.DEV &&
-      permissaoCriador === $Enums.Permissao.SUP
-    )
-      permissao = $Enums.Permissao.SUP;
-    if (
-      (permissao === $Enums.Permissao.DEV ||
-        permissao === $Enums.Permissao.SUP) &&
       permissaoCriador === $Enums.Permissao.ADM
     )
       permissao = $Enums.Permissao.ADM;

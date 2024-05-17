@@ -4,6 +4,7 @@ import { ChamadosService } from './chamados.service';
 import { UsuarioAtual } from 'src/auth/decorators/usuario-atual.decorator';
 import { Usuario } from '@prisma/client';
 import { UpdateChamadosDto } from './dto/update-chamados.dto';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('chamados')
 export class ChamadosController {
@@ -17,7 +18,7 @@ export class ChamadosController {
     return this.chamadosService.findAll(usuario, +status);
   }
 
-  @Get(':id')
+  @Get('encontrar/:id') //localhost:3000/chamados/id
   findOne(@Param('id') id: string) {
     return this.chamadosService.findOne(+id);
   }
@@ -42,7 +43,7 @@ export class ChamadosController {
     return this.chamadosService.chamadosPorMes();
   }
 
-  @Get('atribuidos')
+  @Get('atribuidos') //localhost:3000/chamados/atribuidos
   chamadosAtribuidos() {
     return this.chamadosService.chamadosAtribuidos();
   }

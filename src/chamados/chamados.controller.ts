@@ -52,4 +52,19 @@ export class ChamadosController {
   chamadosNovos() {
     return this.chamadosService.chamadosNovos();
   }
+
+  @Get('avaliados')
+  chamadosAvaliados() {
+    return this.chamadosService.chamadosAvaliados();
+  }
+
+  @Get('avaliados/ano')
+  chamadosAvaliadosNoAno() {
+    return this.chamadosService.chamadosAvaliadosNoAno();
+  }
+
+  @Get('avaliados/mes')
+  chamadosAvaliadosNoMes() {
+    return this.chamadosService.chamadosAvaliadosNoMes();
+  }
 }

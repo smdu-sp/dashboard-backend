@@ -194,7 +194,6 @@ export class ChamadosService {
   }
 
   async chamadosAvaliadosNoAno() {
-    console.log(new Date().getFullYear());
     const data = await this.prisma3.glpi_ticketsatisfactions.findMany({
       select: {
         satisfaction: true

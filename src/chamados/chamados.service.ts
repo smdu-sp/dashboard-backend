@@ -64,7 +64,7 @@ export class ChamadosService {
         }
       },
       orderBy: {
-        date_begin: 'asc'
+        date_begin: 'desc'
       },
       skip: (pagina - 1) * limite,
       take: limite,
@@ -109,7 +109,7 @@ export class ChamadosService {
         }
       },
       orderBy: {
-        date_begin: 'asc'
+        date_begin: 'desc'
       }
     });
     return data;
@@ -262,13 +262,14 @@ export class ChamadosService {
     return data;
   }
   async chamadosAvaliadosNoMes() {
+    
     const data = await this.prisma3.glpi_ticketsatisfactions.findMany({
       select: {
         satisfaction: true
       },
       where: {
         date_begin: {
-          gte: new Date(new Date().getFullYear() - 1, new Date().getMonth() + 1),
+          gte: new Date(new Date().getFullYear(), new Date().getMonth() + 1),
           lte: new Date()
         }
       }

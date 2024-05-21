@@ -67,4 +67,11 @@ export class ChamadosController {
   chamadosAvaliadosNoMes() {
     return this.chamadosService.chamadosAvaliadosNoMes();
   }
+
+  @Get('buscar-tudo')
+  buscarTudo(@Query('pagina') pagina: number = 1, @Query('limite') limite: number = 10,     @UsuarioAtual() usuario: Usuario, 
+  @Query('status') status: string) {
+    
+    return this.chamadosService.buscarTudo(+pagina, +limite, usuario, +status);
+  }
 }

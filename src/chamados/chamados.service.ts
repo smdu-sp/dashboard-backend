@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { Usuario } from '@prisma/client';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma3Service } from 'src/prisma3/prisma3.service';
 import { UpdateChamadosDto } from './dto/update-chamados.dto';
+import { AppService } from 'src/app.service';
 
 const meses = [
   'Janeiro',
@@ -21,9 +22,62 @@ const meses = [
 ];
 
 
+
+
+
 @Injectable()
 export class ChamadosService {
-  constructor(private prisma: PrismaService, private prisma3: Prisma3Service) { }
+  constructor(private prisma: PrismaService, private prisma3: Prisma3Service, private app: AppService) { }
+
+  async buscarTudo(pagina: number, limite: number, usuario: Usuario, status: number){
+    [pagina, limite] = this.app.verificaPagina(pagina, limite);
+    const total = await this.prisma3.glpi_ticketsatisfactions.count();
+    if (total == 0) return { total: 0, pagina: 0, limite: 0, data: [] };
+    [pagina, limite] = this.app.verificaLimite(pagina, limite, total);
+    const iniciais = await this.prisma3.glpi_ticketsatisfactions.findMany({
+      where: {
+        ...(usuario && usuario.permissao === 'USR' ? {
+          Tickets: {
+            Usuarios: {
+              some: {
+                type: 1,
+                user: {
+                  name: {
+                    contains: usuario.login
+                  }
+                }
+              }
+            }
+          }
+        } : {}),
+        ...(status === 0 ? { date_answered: null } : status === 1 ? { date_answered: { not: null } } : {})
+      },
+      include: {
+        Tickets: {
+          include: {
+            Usuarios: {
+              include: {
+                user: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        date_begin: 'asc'
+      },
+      skip: (pagina - 1) * limite,
+      take: limite,
+    });
+    if (!iniciais) throw new ForbiddenException('Nenhum processo encontrado');
+    return {
+      data: iniciais,
+      total,
+      pagina,
+      limite
+    };
+  }
+
   async findAll(usuario: Usuario, status: number) {
     const data = await this.prisma3.glpi_ticketsatisfactions.findMany({
       where: {

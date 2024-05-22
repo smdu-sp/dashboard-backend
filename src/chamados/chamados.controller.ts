@@ -43,6 +43,11 @@ export class ChamadosController {
     return this.chamadosService.chamadosPorMes();
   }
 
+  // @Get('doze-meses')
+  // chamadosDozeMeses() {
+  //   return this.chamadosService.chamadosDozeMeses();
+  // }
+
   @Get('atribuidos') //localhost:3000/chamados/atribuidos
   chamadosAtribuidos() {
     return this.chamadosService.chamadosAtribuidos();
@@ -70,7 +75,7 @@ export class ChamadosController {
 
   @Get('buscar-tudo')
   buscarTudo(@Query('pagina') pagina: number = 1, @Query('limite') limite: number = 10,     
-  
+
   @UsuarioAtual() usuario: Usuario, 
   @Query('status') status: string) {
     

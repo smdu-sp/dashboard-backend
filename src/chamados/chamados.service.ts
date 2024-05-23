@@ -297,15 +297,13 @@ export class ChamadosService {
     return data;
   }
   async chamadosAvaliadosNoMes() {
-    console.log(new Date().getFullYear());
-    
     const data = await this.prisma3.glpi_ticketsatisfactions.findMany({
       select: {
         satisfaction: true
       },
       where: {
         date_begin: {
-          gte: new Date(new Date().getFullYear(), new Date().getMonth() + 1),
+          gte: new Date(new Date().getFullYear(), new Date().getMonth()),
           lte: new Date()
         }
       }

@@ -29,7 +29,7 @@ const meses = [
 export class ChamadosService {
   constructor(private prisma: PrismaService, private prisma3: Prisma3Service, private app: AppService) { }
 
-  async buscarTudo(pagina: number, limite: number, usuario: Usuario, status: number){
+  async buscarTudo(pagina: number, limite: number, usuario: Usuario, status: number) {
     [pagina, limite] = this.app.verificaPagina(pagina, limite);
     const total = await this.prisma3.glpi_ticketsatisfactions.count();
     if (total == 0) return { total: 0, pagina: 0, limite: 0, data: [] };
@@ -120,13 +120,19 @@ export class ChamadosService {
   }
 
   async avaliar(id: number, updateChamadosDto: UpdateChamadosDto) {
+    
+    const today = new Date();
+
+    const horaAvaliado = new Date(today)
+    horaAvaliado.setHours(today.getHours() - 3);
+
     const tipo = await this.prisma3.glpi_ticketsatisfactions.findUnique({
       where: { id }
     });
     if (!tipo) throw new InternalServerErrorException('Erro ao buscar tipo');
     return await this.prisma3.glpi_ticketsatisfactions.update({
       where: { id },
-      data: { satisfaction: +updateChamadosDto.satisfaction, comment: updateChamadosDto.comment }
+      data: { satisfaction: +updateChamadosDto.satisfaction, comment: updateChamadosDto.comment, date_answered: horaAvaliado }
     });
   }
 
@@ -248,38 +254,38 @@ export class ChamadosService {
   }
 
   async chamadosAno(): Promise<{ name: string; tickets: number }[]> {
-  // Obtém a data atual
-  const currentDate = new Date();
+    // Obtém a data atual
+    const currentDate = new Date();
 
-  // Calcula a data há 12 meses atrás
-  const twelveMonthsAgo = new Date();
-  twelveMonthsAgo.setMonth(currentDate.getMonth() - 12);
+    // Calcula a data há 12 meses atrás
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(currentDate.getMonth() - 12);
 
-  const data = await this.prisma3.glpi_users.findMany({
-    where: {
-      is_active: true,
-      auths_id: 6,
-    },
-    include: {
-      tickets: {
-        where: {
-          type: 2,
-          ticket: {
-            OR: [
-              { status: 5 },
-              { status: 6 }
-            ],
-            solvedate: {
-              gte: twelveMonthsAgo,
-              lte: currentDate,
+    const data = await this.prisma3.glpi_users.findMany({
+      where: {
+        is_active: true,
+        auths_id: 6,
+      },
+      include: {
+        tickets: {
+          where: {
+            type: 2,
+            ticket: {
+              OR: [
+                { status: 5 },
+                { status: 6 }
+              ],
+              solvedate: {
+                gte: twelveMonthsAgo,
+                lte: currentDate,
+              }
             }
-          }
-        },
+          },
+        }
       }
-    }
-  });
+    });
 
-  return data.filter((d) => d.tickets.length > 0).map((d) => ({ name: `${d.firstname} ${d.realname}`, tickets: d.tickets.length }));
+    return data.filter((d) => d.tickets.length > 0).map((d) => ({ name: `${d.firstname} ${d.realname}`, tickets: d.tickets.length }));
   }
 
   async chamadosAvaliadosNoAno() {
@@ -310,4 +316,58 @@ export class ChamadosService {
     });
     return data;
   }
+
+
+  async chamadosSeteDiasAtras() {
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+
+    const data = await this.prisma3.glpi_ticketsatisfactions.findMany({
+      select: {
+        satisfaction: true,
+        date_begin: true
+      },
+      where: {
+        date_begin: {
+          lte: sevenDaysAgo
+        },
+        satisfaction: null
+      }
+    });
+
+    return data;
+  }
+
+  async avaliarSeteDiasAtras() {
+      const today = new Date();
+
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 7);
+      sevenDaysAgo.setHours(today.getHours() - 3);
+
+      const horaAvaliado = new Date(today)
+      horaAvaliado.setHours(today.getHours() - 3);
+    
+      const data = await this.prisma3.glpi_ticketsatisfactions.updateMany({
+        where: {
+          date_begin: {
+            lte: sevenDaysAgo
+          },
+          satisfaction: null
+        },
+        data: {
+          satisfaction: 5,
+          comment: "Avaliação feita a após 7 dias.",
+          date_answered: horaAvaliado
+        }
+      });
+      if (!data) throw new InternalServerErrorException('Nenhuma avaliação para fazer');
+      return data;
+
+    }
+    
+
+
+
 }

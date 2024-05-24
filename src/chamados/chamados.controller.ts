@@ -28,6 +28,11 @@ export class ChamadosController {
     return this.chamadosService.avaliar(+id, updateChamadosDto);
   }
 
+  @Patch('avaliar-sete-dias')
+  avaliarSeteDiasAtras() {
+    return this.chamadosService.avaliarSeteDiasAtras();
+  }
+
   @Get('mes')
   chamadosMes() {
     return this.chamadosService.chamadosMes();
@@ -71,6 +76,11 @@ export class ChamadosController {
   @Get('avaliados/mes')
   chamadosAvaliadosNoMes() {
     return this.chamadosService.chamadosAvaliadosNoMes();
+  }
+
+  @Get('sete-dias-atras')
+  chamadosSeteDiasAtras() {
+    return this.chamadosService.chamadosSeteDiasAtras();
   }
 
   @Get('buscar-tudo')

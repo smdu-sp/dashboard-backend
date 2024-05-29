@@ -30,28 +30,29 @@ export class ChamadosService {
   constructor(private prisma: PrismaService, private prisma3: Prisma3Service, private app: AppService) { }
 
   async buscarTudo(pagina: number, limite: number, usuario: Usuario, status: number) {
-    [pagina, limite] = this.app.verificaPagina(pagina, limite);
-    const total = await this.prisma3.glpi_ticketsatisfactions.count();
-    if (total == 0) return { total: 0, pagina: 0, limite: 0, data: [] };
-    [pagina, limite] = this.app.verificaLimite(pagina, limite, total);
-    const iniciais = await this.prisma3.glpi_ticketsatisfactions.findMany({
-      where: {
-        ...(usuario && usuario.permissao === 'USR' ? {
-          Tickets: {
-            Usuarios: {
-              some: {
-                type: 1,
-                user: {
-                  name: {
-                    contains: usuario.login
-                  }
+    const where = {
+      ...(usuario && usuario.permissao === 'USR' ? {
+        Tickets: {
+          Usuarios: {
+            some: {
+              type: 1,
+              user: {
+                name: {
+                  contains: usuario.login
                 }
               }
             }
           }
-        } : {}),
-        ...(status === 0 ? { date_answered: null } : status === 1 ? { date_answered: { not: null } } : {})
-      },
+        }
+      } : {}),
+      ...(status === 0 ? { date_answered: null } : status === 1 ? { date_answered: { not: null } } : {})
+    };
+    [pagina, limite] = this.app.verificaPagina(pagina, limite);
+    const total = await this.prisma3.glpi_ticketsatisfactions.count({ where: { ...where }});
+    if (total == 0) return { total: 0, pagina: 0, limite: 0, data: [] };
+    [pagina, limite] = this.app.verificaLimite(pagina, limite, total);
+    const chamados = await this.prisma3.glpi_ticketsatisfactions.findMany({
+      where: { ...where },
       include: {
         Tickets: {
           include: {
@@ -69,9 +70,9 @@ export class ChamadosService {
       skip: (pagina - 1) * limite,
       take: limite,
     });
-    if (!iniciais) throw new ForbiddenException('Nenhum processo encontrado');
+    if (!chamados) throw new ForbiddenException('Nenhum chamado encontrado');
     return {
-      data: iniciais,
+      data: chamados,
       total,
       pagina,
       limite

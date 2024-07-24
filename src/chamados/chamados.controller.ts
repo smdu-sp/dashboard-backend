@@ -91,4 +91,10 @@ export class ChamadosController {
     
     return this.chamadosService.buscarTudo(+pagina, +limite, usuario, +status);
   }
+
+  @IsPublic()
+  @Get('ultimo')
+  ultimoChamado(){
+    return this.chamadosService.ultimoChamado();
+  }
 }

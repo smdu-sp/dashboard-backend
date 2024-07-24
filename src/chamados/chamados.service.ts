@@ -48,7 +48,7 @@ export class ChamadosService {
       ...(status === 0 ? { date_answered: null } : status === 1 ? { date_answered: { not: null } } : {})
     };
     [pagina, limite] = this.app.verificaPagina(pagina, limite);
-    const total = await this.prisma3.glpi_ticketsatisfactions.count({ where: { ...where }});
+    const total = await this.prisma3.glpi_ticketsatisfactions.count({ where: { ...where } });
     if (total == 0) return { total: 0, pagina: 0, limite: 0, data: [] };
     [pagina, limite] = this.app.verificaLimite(pagina, limite, total);
     const chamados = await this.prisma3.glpi_ticketsatisfactions.findMany({
@@ -121,7 +121,7 @@ export class ChamadosService {
   }
 
   async avaliar(id: number, updateChamadosDto: UpdateChamadosDto) {
-    
+
     const today = new Date();
 
     const horaAvaliado = new Date(today)
@@ -341,34 +341,54 @@ export class ChamadosService {
   }
 
   async avaliarSeteDiasAtras() {
-      const today = new Date();
+    const today = new Date();
 
-      const sevenDaysAgo = new Date(today);
-      sevenDaysAgo.setDate(today.getDate() - 7);
-      sevenDaysAgo.setHours(today.getHours() - 3);
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    sevenDaysAgo.setHours(today.getHours() - 3);
 
-      const horaAvaliado = new Date(today)
-      horaAvaliado.setHours(today.getHours() - 3);
-    
-      const data = await this.prisma3.glpi_ticketsatisfactions.updateMany({
-        where: {
-          date_begin: {
-            lte: sevenDaysAgo
-          },
-          satisfaction: null
+    const horaAvaliado = new Date(today)
+    horaAvaliado.setHours(today.getHours() - 3);
+
+    const data = await this.prisma3.glpi_ticketsatisfactions.updateMany({
+      where: {
+        date_begin: {
+          lte: sevenDaysAgo
         },
-        data: {
-          satisfaction: 5,
-          comment: "Avaliação feita a após 7 dias.",
-          date_answered: horaAvaliado
+        satisfaction: null
+      },
+      data: {
+        satisfaction: 5,
+        comment: "Avaliação feita a após 7 dias.",
+        date_answered: horaAvaliado
+      }
+    });
+    if (!data) throw new InternalServerErrorException('Nenhuma avaliação para fazer');
+    return data;
+
+  }
+
+  async ultimoChamado(){
+    const chamado = this.prisma3.glpi_tickets.findFirst({
+      orderBy: {date: 'desc'},
+      select: {
+        name: true,
+        Usuarios:{
+          where: {
+            type: 1
+          },
+          select: {
+            user: {
+              select: {
+                firstname: true,
+                realname: true
+              }
+            }
+          }
         }
-      });
-      if (!data) throw new InternalServerErrorException('Nenhuma avaliação para fazer');
-      return data;
-
-    }
-    
-
-
+      }
+    })
+    return chamado;
+  }
 
 }

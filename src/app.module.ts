@@ -11,6 +11,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { Prisma2Module } from './prisma2/prisma2.module';
 import { ChamadosModule } from './chamados/chamados.module';
 import { Prisma3Module } from './prisma3/prisma3.module';
+import { RelatoriosModule } from './relatorios/relatorios.module';
 
 @Global()
 @Module({
@@ -21,6 +22,7 @@ import { Prisma3Module } from './prisma3/prisma3.module';
     Prisma2Module,
     ChamadosModule,
     Prisma3Module,
+    RelatoriosModule,
   ],
   controllers: [AppController],
   providers: [

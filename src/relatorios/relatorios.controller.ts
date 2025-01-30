@@ -6,7 +6,7 @@ import { Permissoes } from 'src/auth/decorators/permissoes.decorator';
 export class RelatoriosController {
   constructor(private readonly relatoriosService: RelatoriosService) {}
 
-  @Permissoes('SUP', 'ADM')
+  @Permissoes('ADM')
   @Get('listar-chamados-periodo-ano/:ano_inicio/:ano_fim')
   listarChamadosPeriodoAno(
     @Param('ano_inicio') ano_inicio: string,
